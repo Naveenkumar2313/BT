@@ -14,56 +14,53 @@ import Settings from "@mui/icons-material/Settings";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import Tooltip from "@mui/material/Tooltip";
-import WebAsset from "@mui/icons-material/WebAsset";
-import MailOutline from "@mui/icons-material/MailOutline";
-import StarOutline from "@mui/icons-material/StarOutline";
 import PowerSettingsNew from "@mui/icons-material/PowerSettingsNew";
 
-// import useAuth from "app/hooks/useAuth"; // Removed
 import useSettings from "app/hooks/useSettings";
 import { NotificationProvider } from "app/contexts/NotificationContext";
 import Brand from "app/components/Brand";
-
 import { Span } from "app/components/Typography";
-// import ShoppingCart from "app/components/ShoppingCart"; // Removed
 import { ParcMenu, ParcSearchBox } from "app/components";
 import { NotificationBar } from "app/components/NotificationBar";
 import { themeShadows } from "app/components/ParcTheme/themeColors";
 import { topBarHeight } from "app/utils/constant";
 
-// STYLED COMPONENTS
+// ─── SIDEBAR DIMS (mirror HierarchicalSidenav) ────────────────────────────
+const RAIL_W = 0;
+const PANEL_EXPANDED = 0;
+const PANEL_COLLAPSED = 0;
+
+// ─── STYLED ────────────────────────────────────────────────────────────────
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.text.primary
 }));
 
 const ThemeToggleButton = styled(IconButton)(({ theme }) => ({
-  borderRadius: '12px',
+  borderRadius: "12px",
   padding: 10,
   width: 48,
   height: 48,
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-  border: 'none',
-  boxShadow: 'none',
-  '& .MuiSvgIcon-root': {
-    fontSize: '28px'
-  },
-  '&:hover': {
-    background: theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, 0.08)'
-      : 'rgba(0, 0, 0, 0.04)',
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  "& .MuiSvgIcon-root": { fontSize: "22px" },
+  "&:hover": {
+    background:
+      theme.palette.mode === "dark"
+        ? "rgba(255,255,255,0.08)"
+        : "rgba(0,0,0,0.04)"
   }
 }));
 
-const TopbarRoot = styled("div")({
+const TopbarRoot = styled("div", {
+  shouldForwardProp: (p) => p !== "leftOffset"
+})(({ leftOffset }) => ({
   position: "fixed",
   top: 0,
-  left: 0,
+  left: leftOffset,
   right: 0,
-  zIndex: 96,
+  zIndex: 1198,           // below sidenav (1199/1200) but above content
   height: topBarHeight,
-  boxShadow: themeShadows[8],
-  transition: "all 0.3s ease"
-});
+  transition: "left 240ms cubic-bezier(0.4,0,0.2,1)"
+}));
 
 const TopbarContainer = styled("div")(({ theme }) => ({
   padding: "8px",
@@ -73,16 +70,15 @@ const TopbarContainer = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  background: theme.palette.mode === 'dark' ? '#1e293b' : '#ffffff',
-  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)'}`,
-  [theme.breakpoints.down("sm")]: { paddingLeft: 16, paddingRight: 16 },
-  [theme.breakpoints.down("xs")]: { paddingLeft: 14, paddingRight: 16 }
-}));
-
-const BrandContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  marginRight: "auto"
+  background:
+    theme.palette.mode === "dark" ? "#1e293b" : "#ffffff",
+  borderBottom: `1px solid ${
+    theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.1)"
+      : "rgba(0,0,0,0.1)"
+  }`,
+  boxShadow: themeShadows[8],
+  [theme.breakpoints.down("sm")]: { paddingLeft: 12, paddingRight: 12 }
 }));
 
 const UserMenu = styled("div")({
@@ -107,99 +103,60 @@ const StyledItem = styled(MenuItem)(({ theme }) => ({
   "& span": { marginRight: "10px", color: theme.palette.text.primary }
 }));
 
-const IconBox = styled("div")(({ theme }) => ({
-  display: "inherit",
-  [theme.breakpoints.down("md")]: { display: "none !important" }
-}));
-
+// ─── COMPONENT ────────────────────────────────────────────────────────────
 const Layout1Topbar = () => {
   const theme = useTheme();
   const { settings, updateSettings } = useSettings();
-  // const { logout, user } = useAuth(); // Removed
   const isMdScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const isDarkMode = theme.palette.mode === 'dark' ||
-    settings.activeTheme?.includes('Dark') ||
-    settings.theme?.palette?.type === 'dark' ||
-    false;
+  // Compute left offset based on sidebar state
+  const sidenavMode = settings.layout1Settings?.leftSidebar?.mode || "full";
+  const showSidenav = settings.layout1Settings?.leftSidebar?.show !== false;
+  const isPinned = sidenavMode !== "compact" && sidenavMode !== "close";
+  const leftOffset =
+    showSidenav && sidenavMode !== "close"
+      ? RAIL_W + (isPinned ? PANEL_EXPANDED : PANEL_COLLAPSED)
+      : 0;
+
+  const isDarkMode =
+    settings.activeTheme?.includes("Dark") ||
+    settings.activeTheme === "slateDark1" ||
+    settings.activeTheme === "slateDark2";
 
   const toggleTheme = () => {
-    const currentTheme = settings.activeTheme;
-    const isDark = currentTheme.includes('Dark') || currentTheme === 'slateDark1' || currentTheme === 'slateDark2';
-    const newTheme = isDark ? 'blue' : 'blueDark';
-
-    updateSettings({
-      activeTheme: newTheme,
-      themes: {
-        ...settings.themes,
-        [newTheme]: {
-          ...settings.themes[newTheme],
-          palette: {
-            ...settings.themes[newTheme].palette,
-            mode: isDark ? 'light' : 'dark',
-            background: {
-              paper: isDark ? '#fff' : '#1a2038',
-              default: isDark ? '#fafafa' : '#0f172a'
-            },
-            text: {
-              primary: isDark ? 'rgba(0, 0, 0, 0.87)' : '#fff',
-              secondary: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)'
-            },
-            divider: isDark ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
-            action: {
-              active: isDark ? 'rgba(0, 0, 0, 0.54)' : 'rgba(255, 255, 255, 0.7)',
-              hover: isDark ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.08)',
-              selected: isDark ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.16)',
-              disabled: isDark ? 'rgba(0, 0, 0, 0.26)' : 'rgba(255, 255, 255, 0.3)',
-              disabledBackground: isDark ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
-            }
-          }
-        }
-      }
-    });
-  };
-
-  const updateSidebarMode = (sidebarSettings) => {
-    updateSettings({ layout1Settings: { leftSidebar: { ...sidebarSettings } } });
+    const isDark =
+      settings.activeTheme?.includes("Dark") ||
+      settings.activeTheme === "slateDark1" ||
+      settings.activeTheme === "slateDark2";
+    updateSettings({ activeTheme: isDark ? "blue" : "blueDark" });
   };
 
   const handleSidebarToggle = () => {
-    let { layout1Settings } = settings;
-    let currentMode = layout1Settings.leftSidebar.mode;
-    let newMode;
-    
-    if (currentMode === "full") {
-      newMode = "compact";
-    } else if (currentMode === "compact") {
-      newMode = "full";
-    } else {
-      newMode = "full";
-    }
-    
-    updateSidebarMode({ mode: newMode });
+    const currentMode = settings.layout1Settings.leftSidebar.mode;
+    const newMode =
+      currentMode === "full" ? "compact" : "full";
+    updateSettings({ layout1Settings: { leftSidebar: { mode: newMode } } });
   };
 
-  // Static user placeholder
   const user = { name: "User", avatar: "" };
   const logout = () => {};
 
   return (
-    <TopbarRoot>
+    <TopbarRoot leftOffset={leftOffset}>
       <TopbarContainer>
-        <Box display="flex" alignItems="center">
-          <StyledIconButton onClick={handleSidebarToggle}>
+        <Box display="flex" alignItems="center" gap={1}>
+          <StyledIconButton onClick={handleSidebarToggle} size="small">
             <Menu />
           </StyledIconButton>
-          
-          <BrandContainer>
-            <Brand />
-          </BrandContainer>
+          <Brand />
         </Box>
 
         <Box display="flex" alignItems="center">
           <ParcSearchBox />
 
-          <Tooltip title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}>
+          <Tooltip
+            title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+          >
             <ThemeToggleButton onClick={toggleTheme} color="inherit">
               {isDarkMode ? <Brightness4Icon /> : <Brightness7Icon />}
             </ThemeToggleButton>
@@ -209,36 +166,30 @@ const Layout1Topbar = () => {
             <NotificationBar />
           </NotificationProvider>
 
-          {/* <ShoppingCart /> Removed */}
-
           <ParcMenu
             menuButton={
               <UserMenu>
                 <Span>
                   Hi <strong>{user.name}</strong>
                 </Span>
-
                 <Avatar src={user.avatar} sx={{ cursor: "pointer" }} />
               </UserMenu>
-            }>
+            }
+          >
             <StyledItem>
               <Link to="/">
                 <Home />
                 <Span sx={{ marginInlineStart: 1 }}>Home</Span>
               </Link>
             </StyledItem>
-
             <StyledItem>
-              {/* Profile item, no redirect */}
               <Person />
               <Span sx={{ marginInlineStart: 1 }}>Profile</Span>
             </StyledItem>
-
             <StyledItem>
               <Settings />
               <Span sx={{ marginInlineStart: 1 }}>Settings</Span>
             </StyledItem>
-
             <StyledItem onClick={logout}>
               <PowerSettingsNew />
               <Span sx={{ marginInlineStart: 1 }}>Logout</Span>

@@ -8,15 +8,20 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 
 import Layout1Topbar from "./Layout1Topbar";
-import Layout1Sidenav from "./Layout1Sidenav";
 import Footer from "app/components/Footer";
 import { ParcSuspense } from "app/components";
 import useSettings from "app/hooks/useSettings";
 import SidenavTheme from "app/components/ParcTheme/SidenavTheme/SidenavTheme";
-import { sidenavCompactWidth, sideNavWidth, topBarHeight } from "app/utils/constant";
+import { topBarHeight } from "app/utils/constant";
 import SettingsFab from "app/components/SettingsFab";
+import { HierarchicalSidenav } from "app/components/HierarchicalSidenav";
 
-// STYLED COMPONENTS
+// ─── DIMENSIONS (must mirror HierarchicalSidenav) ─────────────────────────
+const RAIL_W = 90;
+const PANEL_EXPANDED = 232;
+const PANEL_COLLAPSED = 44;
+
+// ─── STYLED ────────────────────────────────────────────────────────────────
 const Layout1Root = styled("div")(({ theme }) => ({
   display: "flex",
   background: theme.palette.background.default
@@ -40,20 +45,21 @@ const StyledScrollBar = styled(Scrollbar)(() => ({
 }));
 
 const LayoutContainer = styled("div", {
-  shouldForwardProp: (prop) => prop !== "open" && prop !== "width"
-})(({ width }) => ({
+  shouldForwardProp: (prop) => prop !== "marginLeft"
+})(({ marginLeft }) => ({
   height: "100vh",
   display: "flex",
   flexGrow: "1",
   flexDirection: "column",
   verticalAlign: "top",
-  marginLeft: width,
+  marginLeft: marginLeft,
   position: "relative",
   overflow: "hidden",
-  transition: "all 0.3s ease",
+  transition: "margin-left 240ms cubic-bezier(0.4,0,0.2,1)",
   paddingTop: topBarHeight
 }));
 
+// ─── LAYOUT ────────────────────────────────────────────────────────────────
 const Layout1 = () => {
   const { settings, updateSettings } = useSettings();
   const { layout1Settings } = settings;
@@ -62,25 +68,17 @@ const Layout1 = () => {
     leftSidebar: { mode: sidenavMode, show: showSidenav }
   } = layout1Settings;
 
-  const getSidenavWidth = () => {
-    switch (sidenavMode) {
-      case "full":
-        return sideNavWidth;
-
-      case "compact":
-        return sidenavCompactWidth;
-
-      default:
-        return "0px";
-    }
-  };
-
-  const sidenavWidth = getSidenavWidth();
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const ref = useRef({ isMdScreen, settings });
   const layoutClasses = `theme-${theme.palette.type}`;
+
+  // Content left margin: rail + panel
+  const isPinned = sidenavMode !== "compact";
+  const contentMargin =
+    showSidenav && sidenavMode !== "close"
+      ? `${RAIL_W + (isPinned ? PANEL_EXPANDED : PANEL_COLLAPSED)}px`
+      : "0px";
 
   useEffect(() => {
     let { settings } = ref.current;
@@ -94,13 +92,9 @@ const Layout1 = () => {
 
   return (
     <Layout1Root className={layoutClasses}>
-      {showSidenav && sidenavMode !== "close" && (
-        <SidenavTheme>
-          <Layout1Sidenav />
-        </SidenavTheme>
-      )}
 
-      <LayoutContainer width={sidenavWidth}>
+
+      <LayoutContainer marginLeft={contentMargin}>
         {layout1Settings.topbar.show && layout1Settings.topbar.fixed && (
           <ThemeProvider theme={currentTheme}>
             <Layout1Topbar fixed={true} className="elevation-z8" />
@@ -114,13 +108,11 @@ const Layout1 = () => {
                 <Layout1Topbar />
               </ThemeProvider>
             )}
-
             <Box flexGrow={1} position="relative">
               <ParcSuspense>
                 <Outlet />
               </ParcSuspense>
             </Box>
-
             {settings.footer.show && !settings.footer.fixed && <Footer />}
           </StyledScrollBar>
         )}
@@ -132,19 +124,18 @@ const Layout1 = () => {
                 <Layout1Topbar />
               </ThemeProvider>
             )}
-
             <Box flexGrow={1} position="relative">
               <ParcSuspense>
                 <Outlet />
               </ParcSuspense>
             </Box>
-
             {settings.footer.show && !settings.footer.fixed && <Footer />}
           </ContentBox>
         )}
 
         {settings.footer.show && settings.footer.fixed && <Footer />}
       </LayoutContainer>
+
       <SettingsFab />
     </Layout1Root>
   );
