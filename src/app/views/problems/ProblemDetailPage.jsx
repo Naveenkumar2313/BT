@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Chip, Divider, Paper, Alert, Select, MenuItem, Button, FormControl } from '@mui/material';
+import { Box, Typography, Chip, Divider, Paper, Alert, Select, MenuItem, Button, FormControl, CircularProgress } from '@mui/material';
 import Editor from '@monaco-editor/react';
 import problems from '../../data/problems';
 import { runCode } from '../../utils/judge0';
@@ -68,6 +68,15 @@ const ProblemDetailPage = () => {
     setIsSubmitting(false);
   };
 
+  const handleTestApi = async () => {
+    setIsSubmitting(true);
+    setOutput(null);
+    setSubmitResults(null);
+    const result = await runCode("print('Hello from RapidAPI!')", 71, "");
+    setOutput(result);
+    setIsSubmitting(false);
+  };
+
   const handleSubmitCode = async () => {
     if (!problem) return;
     
@@ -78,7 +87,7 @@ const ProblemDetailPage = () => {
     const langObj = LANGUAGES.find((l) => l.value === language);
     const languageId = langObj ? langObj.id : 71;
 
-    const testCases = problem.testCases.filter((tc) => !tc.hidden);
+    const testCases = problem.testCases;
     const results = [];
     let passedCount = 0;
 
@@ -204,10 +213,19 @@ const ProblemDetailPage = () => {
           </FormControl>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button 
+              variant="outlined" 
+              color="secondary"
+              onClick={handleTestApi}
+              disabled={isSubmitting || isSubmittingCode}
+            >
+              Test API
+            </Button>
+            <Button 
               variant="contained" 
               color="primary"
               onClick={handleRunCode}
               disabled={isSubmitting || isSubmittingCode}
+              startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
             >
               {isSubmitting ? 'Running...' : 'Run Code'}
             </Button>
@@ -216,6 +234,7 @@ const ProblemDetailPage = () => {
               color="success"
               onClick={handleSubmitCode}
               disabled={isSubmitting || isSubmittingCode}
+              startIcon={isSubmittingCode ? <CircularProgress size={16} color="inherit" /> : null}
             >
               {isSubmittingCode ? 'Submitting...' : 'Submit'}
             </Button>
@@ -329,6 +348,11 @@ const ProblemDetailPage = () => {
               Output will appear here
             </Typography>
           )}
+        </Box>
+        <Box sx={{ bgcolor: '#1e1e1e', px: 2, pb: 1, textAlign: 'right' }}>
+          <Typography variant="caption" sx={{ color: '#888' }}>
+            Powered by Judge0 CE via RapidAPI
+          </Typography>
         </Box>
       </Box>
     </Box>

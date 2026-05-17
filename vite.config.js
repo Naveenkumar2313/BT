@@ -20,5 +20,18 @@ export default defineConfig({
     alias: {
       app: path.resolve(__dirname, "src/app")
     }
+  },
+  server: {
+    proxy: {
+      '/rapidapi': {
+        target: 'https://judge0-ce.p.rapidapi.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/rapidapi/, ''),
+        headers: {
+          'X-RapidAPI-Key': 'ca4d1cdb95msh97d80c10e13ed1bp188aacjsn76682c55d7a1',
+          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+        }
+      }
+    }
   }
 });
