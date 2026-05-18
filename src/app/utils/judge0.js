@@ -7,8 +7,8 @@ export const LANGUAGE_IDS = {
 
 export async function runCode(sourceCode, languageId, stdin) {
   try {
-    // Step 1: POST to /rapidapi/submissions
-    const postResponse = await fetch("/rapidapi/submissions?base64_encoded=false&wait=false", {
+    // Step 1: POST to /judge0/submissions
+    const postResponse = await fetch("/judge0/submissions?base64_encoded=false&wait=false", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -29,8 +29,8 @@ export async function runCode(sourceCode, languageId, stdin) {
       throw new Error("No token received from Judge0");
     }
 
-    // Step 2: Poll GET /rapidapi/submissions/{token}
-    const getUrl = `/rapidapi/submissions/${token}?base64_encoded=false`;
+    // Step 2: Poll GET /judge0/submissions/{token}
+    const getUrl = `/judge0/submissions/${token}?base64_encoded=false`;
     
     const result = await new Promise((resolve, reject) => {
       const startTime = Date.now();

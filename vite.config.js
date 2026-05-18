@@ -23,14 +23,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/rapidapi': {
-        target: 'https://judge0-ce.p.rapidapi.com',
+      '/judge0': {
+        target: 'http://13.201.40.217:2358',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/rapidapi/, ''),
-        headers: {
-          'X-RapidAPI-Key': 'ca4d1cdb95msh97d80c10e13ed1bp188aacjsn76682c55d7a1',
-          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-        }
+        rewrite: (path) => path.replace(/^\/judge0/, '')
       }
     }
   }

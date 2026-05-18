@@ -68,14 +68,6 @@ const ProblemDetailPage = () => {
     setIsSubmitting(false);
   };
 
-  const handleTestApi = async () => {
-    setIsSubmitting(true);
-    setOutput(null);
-    setSubmitResults(null);
-    const result = await runCode("print('Hello from RapidAPI!')", 71, "");
-    setOutput(result);
-    setIsSubmitting(false);
-  };
 
   const handleSubmitCode = async () => {
     if (!problem) return;
@@ -212,14 +204,7 @@ const ProblemDetailPage = () => {
             </Select>
           </FormControl>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button 
-              variant="outlined" 
-              color="secondary"
-              onClick={handleTestApi}
-              disabled={isSubmitting || isSubmittingCode}
-            >
-              Test API
-            </Button>
+
             <Button 
               variant="contained" 
               color="primary"
@@ -351,7 +336,7 @@ const ProblemDetailPage = () => {
         </Box>
         <Box sx={{ bgcolor: '#1e1e1e', px: 2, pb: 1, textAlign: 'right' }}>
           <Typography variant="caption" sx={{ color: '#888' }}>
-            Powered by Judge0 CE via RapidAPI
+            Powered by Judge0 CE
           </Typography>
         </Box>
       </Box>
