@@ -4,6 +4,7 @@ import { Box, Typography, Chip, Divider, Paper, Alert, Select, MenuItem, Button,
 import Editor from '@monaco-editor/react';
 import problems from '../../data/problems';
 import { runCode } from '../../utils/judge0';
+import { generateTestCode } from '../../utils/testHarness';
 
 const getDifficultyColor = (difficulty) => {
   switch (difficulty) {
@@ -63,7 +64,8 @@ const ProblemDetailPage = () => {
     const firstVisibleTest = problem.testCases.find((tc) => !tc.hidden);
     const stdin = firstVisibleTest ? firstVisibleTest.input : '';
 
-    const result = await runCode(code, languageId, stdin);
+    const wrappedCode = generateTestCode(problem, code, language, stdin);
+    const result = await runCode(wrappedCode, languageId, stdin);
     setOutput(result);
     setIsSubmitting(false);
   };
@@ -84,7 +86,8 @@ const ProblemDetailPage = () => {
     let passedCount = 0;
 
     for (const tc of testCases) {
-      const result = await runCode(code, languageId, tc.input);
+      const wrappedCode = generateTestCode(problem, code, language, tc.input);
+      const result = await runCode(wrappedCode, languageId, tc.input);
       
       let actualOutput = "";
       if (result.stdout) {

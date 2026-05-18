@@ -14,9 +14,9 @@ const problems = [
       { input: "array = [5, 4, 3, 2, 1], k = 6", output: "-1", explanation: "The target element 6 is not in the array." }
     ],
     testCases: [
-      { input: "[[1, 2, 3, 4, 5], 3]", expectedOutput: "2", hidden: false },
-      { input: "[[5, 4, 3, 2, 1], 6]", expectedOutput: "-1", hidden: false },
-      { input: "[[1], 1]", expectedOutput: "0", hidden: true }
+      { input: "[[1,2,3,4,5],3]", expectedOutput: "2", hidden: false },
+      { input: "[[5,4,3,2,1],6]", expectedOutput: "-1", hidden: false },
+      { input: "[[1],1]", expectedOutput: "0", hidden: true }
     ],
     starterCode: {
       python: "def linear_search(array, k):\n    # Write your code here\n    pass",
@@ -39,9 +39,9 @@ const problems = [
       { input: "matrix = [[3, 1, 4], [2, 5, 8], [9, 6, 7]], target = 5", output: "2", explanation: "Target 5 is at index (1, 1). Distance = 1 + 1 = 2." }
     ],
     testCases: [
-      { input: "[[[3, 1, 4], [2, 5, 8], [9, 6, 7]], 5]", expectedOutput: "2", hidden: false },
-      { input: "[[[1, 2], [3, 4]], 9]", expectedOutput: "-1", hidden: false },
-      { input: "[[[1]], 1]", expectedOutput: "0", hidden: true }
+      { input: "[[[3,1,4],[2,5,8],[9,6,7]],5]", expectedOutput: "2", hidden: false },
+      { input: "[[[1,2],[3,4]],9]", expectedOutput: "-1", hidden: false },
+      { input: "[[[1]],1]", expectedOutput: "0", hidden: true }
     ],
     starterCode: {
       python: "def search_matrix(matrix, target):\n    # Write your code here\n    pass",
@@ -119,9 +119,9 @@ const problems = [
       { input: "s = \"abcd\"", output: "\"dcbabcd\"", explanation: "Adding 'dcb' to the front makes it a palindrome." }
     ],
     testCases: [
-      { input: "[\"aacecaaa\"]", expectedOutput: "\"aaacecaaa\"", hidden: false },
-      { input: "[\"abcd\"]", expectedOutput: "\"dcbabcd\"", hidden: false },
-      { input: "[\"a\"]", expectedOutput: "\"a\"", hidden: true }
+      { input: "[\"aacecaaa\"]", expectedOutput: "aaacecaaa", hidden: false },
+      { input: "[\"abcd\"]", expectedOutput: "dcbabcd", hidden: false },
+      { input: "[\"a\"]", expectedOutput: "a", hidden: true }
     ],
     starterCode: {
       python: "def shortest_palindrome(s):\n    # Write your code here\n    pass",
@@ -172,9 +172,9 @@ const problems = [
       { input: "array = [8, 5, 2, 9, 5, 6, 3]", output: "[2, 3, 5, 5, 6, 8, 9]", explanation: "Array sorted in ascending order using bubble sort." }
     ],
     testCases: [
-      { input: "[[8, 5, 2, 9, 5, 6, 3]]", expectedOutput: "[2, 3, 5, 5, 6, 8, 9]", hidden: false },
-      { input: "[[1, 2, 3]]", expectedOutput: "[1, 2, 3]", hidden: false },
-      { input: "[[]]", expectedOutput: "[]", hidden: true }
+      { input: "[[8,5,2,9,5,6,3]]", expectedOutput: "[2,3,5,5,6,8,9]", hidden: false },
+      { input: "[[1,2,3]]", expectedOutput: "[1,2,3]", hidden: false },
+      { input: "[[3,1]]", expectedOutput: "[1,3]", hidden: true }
     ],
     starterCode: {
       python: "def bubble_sort(array):\n    # Write your code here\n    pass",
@@ -197,9 +197,9 @@ const problems = [
       { input: "array = [8, 5, 2, 9, 5, 6, 3]", output: "[2, 3, 5, 5, 6, 8, 9]", explanation: "Array sorted in ascending order using selection sort." }
     ],
     testCases: [
-      { input: "[[8, 5, 2, 9, 5, 6, 3]]", expectedOutput: "[2, 3, 5, 5, 6, 8, 9]", hidden: false },
-      { input: "[[1, 2, 3]]", expectedOutput: "[1, 2, 3]", hidden: false },
-      { input: "[[]]", expectedOutput: "[]", hidden: true }
+      { input: "[[8,5,2,9,5,6,3]]", expectedOutput: "[2,3,5,5,6,8,9]", hidden: false },
+      { input: "[[1,2,3]]", expectedOutput: "[1,2,3]", hidden: false },
+      { input: "[[3,1]]", expectedOutput: "[1,3]", hidden: true }
     ],
     starterCode: {
       python: "def selection_sort(array):\n    # Write your code here\n    pass",
